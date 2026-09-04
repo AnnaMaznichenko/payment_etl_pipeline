@@ -1,0 +1,96 @@
+services:
+  # Go приложение
+  app:
+    build:
+      context: ..          # контекст - корень проекта
+      dockerfile: deployments/Dockerfile  # путь к Dockerfile
+    environment:
+      CARDS_DSN: ${CARDS_DSN}
+      WALLETS_DSN: ${WALLETS_DSN}
+      CRYPTO_DSN: ${CRYPTO_DSN}
+      META_DSN: ${META_DSN}
+      CLICKHOUSE_DSN: ${CLICKHOUSE_DSN}
+    depends_on:
+       - postgres-cards
+       - postgres-wallets
+       - postgres-crypto
+       - postgres-meta
+       - clickhouse
+    restart: unless-stopped
+
+  # База для платежей по картам
+  postgres-cards:
+    image: postgres:15-alpine
+    container_name: postgres-cards
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_CARDS_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-cards-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+    # База для кошельков
+  postgres-wallets:
+    image: postgres:15-alpine
+    container_name: postgres-wallets
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_WALLETS_DB}
+    ports:
+      - "5433:5432"          # внешний порт 5433, чтобы не конфликтовать с cards
+    volumes:
+      - postgres-wallets-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  # База для криптовалюты
+  postgres-crypto:
+    image: postgres:15-alpine
+    container_name: postgres-crypto
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_CRYPTO_DB}
+    ports:
+      - "5434:5432"          # внешний порт 5434
+    volumes:
+      - postgres-crypto-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  # База для метаданных (чекпоинты)
+  postgres-meta:
+    image: postgres:15-alpine
+    container_name: postgres-meta
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_META_DB}
+    ports:
+      - "5435:5432"          # внешний порт 5435
+    volumes:
+      - postgres-meta-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+   # ClickHouse
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    container_name: clickhouse
+    environment:
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD}
+    ports:
+      - "8123:8123"          # HTTP-интерфейс (для клиентов)
+      - "9000:9000"          # нативный протокол (для драйвера Go)
+    volumes:
+      - clickhouse-data:/var/lib/clickhouse
+    restart: unless-stopped
+
+volumes:
+  postgres-cards-data:
+  postgres-wallets-data:
+  postgres-crypto-data:
+  postgres-meta-data:
+  clickhouse-data:
