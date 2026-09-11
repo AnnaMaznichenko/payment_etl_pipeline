@@ -18,6 +18,8 @@ RUN apk update && apk upgrade --no-cache && apk add --no-cache ca-certificates
 
 COPY --from=builder /app/main .
 
+COPY --from=builder /app/migrations ./migrations
+
 EXPOSE 8080
 
 ENTRYPOINT ["./main"]

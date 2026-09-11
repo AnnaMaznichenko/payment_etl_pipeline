@@ -1,9 +1,18 @@
 include deployments/.env
 
-# Docker
-.PHONY: docker-up
-docker-up:
-	docker-compose -f deployments/docker-compose.yml up -d
+# Запуск приложения в правильном порядке
+.PHONY: full-up
+full-up: docker-down run
+
+# Запуск контейнеров с БД
+.PHONY: infra-up
+infra-up:
+	docker-compose -f deployments/docker-compose.yml up -d postgres-cards postgres-wallets postgres-crypto postgres-meta clickhouse
+
+# Запуск приложения в Docker
+.PHONY: run
+run:
+	docker-compose -f deployments/docker-compose.yml up -d --build
 
 .PHONY: docker-down
 docker-down:
@@ -13,13 +22,18 @@ docker-down:
 docker-logs:
 	docker-compose -f deployments/docker-compose.yml logs -f
 
+# Запустить только приложение (без пересборки)
+.PHONY: run-app
+run-app:
+	docker-compose -f deployments/docker-compose.yml up -d app
+
+# Миграции postgres (через goose)
+
 POSTGRES_USER ?= user
 POSTGRES_CARDS_DB ?= cards_db
 POSTGRES_WALLETS_DB ?= wallets_db
 POSTGRES_CRYPTO_DB ?= crypto_db
 POSTGRES_META_DB ?= meta_db
-
-# Миграции postgres (через goose)
 
 GOOSE_DRIVER=postgres
 GOOSE_CARDS_DSN=postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@localhost:5432/$(POSTGRES_CARDS_DB)?sslmode=disable
@@ -61,20 +75,17 @@ migrate-crypto-down:
 migrate-meta-down:
 	goose -dir ./go/migrations/postgres/meta $(GOOSE_DRIVER) "$(GOOSE_META_DSN)" down
 
-# Миграции ClickHouse
+# Миграции ClickHouse (через goose)
+
+CLICKHOUSE_GOOSE_DSN=clickhouse://$(CLICKHOUSE_USER):$(CLICKHOUSE_PASSWORD)@localhost:9000/default
+
 .PHONY: migrate-clickhouse-up
 migrate-clickhouse-up:
-	@for f in $$(ls ./go/migrations/clickhouse/*.up.sql | sort); do \
-		echo "[clickhouse] up: $$(basename $$f)"; \
-		docker exec -i clickhouse clickhouse-client --user $(CLICKHOUSE_USER) --password $(CLICKHOUSE_PASSWORD) --query "$$(cat $$f)"; \
-	done
+	goose -dir ./go/migrations/clickhouse clickhouse "$(CLICKHOUSE_GOOSE_DSN)" up
 
 .PHONY: migrate-clickhouse-down
 migrate-clickhouse-down:
-	@for f in $$(ls ./go/migrations/clickhouse/*.down.sql | sort -r); do \
-		echo "[clickhouse] down: $$(basename $$f)"; \
-		docker exec -i clickhouse clickhouse-client --user $(CLICKHOUSE_USER) --password $(CLICKHOUSE_PASSWORD) --query "$$(cat $$f)"; \
-	done
+	goose -dir ./go/migrations/clickhouse clickhouse "$(CLICKHOUSE_GOOSE_DSN)" down
 
 # Запуск всех миграций
 .PHONY: migrate-all-up
