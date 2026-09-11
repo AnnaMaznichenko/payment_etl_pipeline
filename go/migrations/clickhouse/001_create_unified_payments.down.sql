@@ -1,1 +1,0 @@
-DROP TABLE IF EXISTS default.unified_payments;
