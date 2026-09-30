@@ -2,6 +2,7 @@ package config
 
 import (
 	"log"
+	"os"
 	"time"
 
 	"github.com/caarlos0/env/v11"
@@ -13,6 +14,7 @@ type Config struct {
 	ClickHouse ClickHouseConfig
 	Migrations MigrationsConfig
 	Pipeline   PipelineConfig
+	Generator  GeneratorConfig
 }
 
 type PostgresConfig struct {
@@ -43,9 +45,18 @@ type PipelineConfig struct {
 	ShutdownTimeout time.Duration `env:"SHUTDOWN_TIMEOUT" envDefault:"10s"`
 }
 
+type GeneratorConfig struct {
+	Enabled         bool          `env:"GENERATOR_ENABLED" envDefault:"true"`
+	CardsInterval   time.Duration `env:"GENERATOR_CARDS_INTERVAL"  envDefault:"3s"`
+	WalletsInterval time.Duration `env:"GENERATOR_WALLETS_INTERVAL" envDefault:"5s"`
+	CryptoInterval  time.Duration `env:"GENERATOR_CRYPTO_INTERVAL" envDefault:"7s"`
+}
+
 func Load() *Config {
-	if err := godotenv.Load(); err != nil {
-		log.Println("No .env file found, using system environment variables")
+	if _, err := os.Stat(".env"); err == nil {
+		if err := godotenv.Load(); err != nil {
+			log.Printf("failed to load .env: %v", err)
+		}
 	}
 
 	cfg := &Config{}
