@@ -29,7 +29,7 @@ func NewCheckpointRepository(db *gorm.DB) interfaces.CheckpointRepository {
 	}
 }
 
-func (r checkpointRepository) Get(ctx context.Context, sources []source.Source) (map[source.Source]time.Time, error) {
+func (r *checkpointRepository) Get(ctx context.Context, sources []source.Source) (map[source.Source]time.Time, error) {
 	sourceStrings := make([]string, len(sources))
 	for i, s := range sources {
 		sourceStrings[i] = s.String()
@@ -59,7 +59,7 @@ func (r checkpointRepository) Get(ctx context.Context, sources []source.Source) 
 	return result, nil
 }
 
-func (r checkpointRepository) Update(ctx context.Context, updates map[source.Source]time.Time) error {
+func (r *checkpointRepository) Update(ctx context.Context, updates map[source.Source]time.Time) error {
 	if len(updates) == 0 {
 		return nil
 	}
