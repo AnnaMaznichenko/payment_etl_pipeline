@@ -14,6 +14,11 @@ infra-up:
 run:
 	docker-compose -f deployments/docker-compose.yml up -d --build
 
+# Запуск в foreground (Ctrl+C для остановки)
+.PHONY: run-fg
+run-fg:
+	docker-compose -f deployments/docker-compose.yml up --build
+
 .PHONY: docker-down
 docker-down:
 	docker-compose -f deployments/docker-compose.yml down
@@ -94,19 +99,3 @@ migrate-all-up: migrate-cards-up migrate-wallets-up migrate-crypto-up migrate-me
 # Откат всех миграций
 .PHONY: migrate-all-down
 migrate-all-down: migrate-cards-down migrate-wallets-down migrate-crypto-down migrate-meta-down migrate-clickhouse-down
-
-# Seed-данные
-.PHONY: seed-cards
-seed-cards:
-	docker exec -i postgres-cards psql -U $(POSTGRES_USER) -d $(POSTGRES_CARDS_DB) < ./go/seeds/cards_seed.sql
-
-.PHONY: seed-wallets
-seed-wallets:
-	docker exec -i postgres-wallets psql -U $(POSTGRES_USER) -d $(POSTGRES_WALLETS_DB) < ./go/seeds/wallets_seed.sql
-
-.PHONY: seed-crypto
-seed-crypto:
-	docker exec -i postgres-crypto psql -U $(POSTGRES_USER) -d $(POSTGRES_CRYPTO_DB) < ./go/seeds/crypto_seed.sql
-
-.PHONY: seed-all
-seed-all: seed-cards seed-wallets seed-crypto
