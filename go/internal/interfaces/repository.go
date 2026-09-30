@@ -23,7 +23,8 @@ type Query struct {
 }
 
 type PaymentRepository[T any] interface {
-	Find(ctx context.Context, query Query) ([]T, error)
+    Find(ctx context.Context, query Query) ([]T, error)
+    Upsert(ctx context.Context, items []T) error
 }
 
 type CheckpointRepository interface {

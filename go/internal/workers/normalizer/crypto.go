@@ -23,7 +23,7 @@ func NewCryptoNormalizer() interfaces.Normalizer[dbo.PaymentCrypto] {
 	}
 }
 
-func (n cryptoNormalizer) Normalize(ctx context.Context, rawCh <-chan dbo.PaymentCrypto) <-chan models.PaymentEvent {
+func (n *cryptoNormalizer) Normalize(ctx context.Context, rawCh <-chan dbo.PaymentCrypto) <-chan models.PaymentEvent {
 	return normalizeEvent(ctx, rawCh, func(crypto dbo.PaymentCrypto) models.PaymentEvent {
 		return models.PaymentEvent{
 			SourceSystem:      source.Crypto.String(),

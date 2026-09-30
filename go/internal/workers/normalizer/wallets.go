@@ -24,7 +24,7 @@ func NewWalletsNormalizer() interfaces.Normalizer[dbo.PaymentWallet] {
 	}
 }
 
-func (n walletsNormalizer) Normalize(ctx context.Context, rawCh <-chan dbo.PaymentWallet) <-chan models.PaymentEvent {
+func (n *walletsNormalizer) Normalize(ctx context.Context, rawCh <-chan dbo.PaymentWallet) <-chan models.PaymentEvent {
 	return normalizeEvent(ctx, rawCh, func(wallet dbo.PaymentWallet) models.PaymentEvent {
 		return models.PaymentEvent{
 			SourceSystem:      source.Wallets.String(),

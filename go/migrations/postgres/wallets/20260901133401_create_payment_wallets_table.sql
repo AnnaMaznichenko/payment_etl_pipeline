@@ -7,8 +7,8 @@ CREATE TABLE IF NOT EXISTS payment_wallets (
     amount_rub DECIMAL(12,2) NOT NULL,
     commission_rub DECIMAL(10,2) DEFAULT 0,
     state SMALLINT NOT NULL,
-    processed_dt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    processed_dt TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 -- +goose StatementEnd
 

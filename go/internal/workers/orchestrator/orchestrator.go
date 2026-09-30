@@ -52,13 +52,13 @@ func NewOrchestrator(
 	}
 }
 
-func (o orchestrator) Run(ctx context.Context) error {
+func (o *orchestrator) Run(ctx context.Context) error {
 	for {
 		select {
 		case <-ctx.Done():
 			return nil
 		default:
-			processingStartTime := time.Now()
+			processingStartTime := time.Now().UTC()
 
 			lastProcessingAt, err := o.checkpointRepo.Get(ctx, source.Slice())
 			if err != nil {

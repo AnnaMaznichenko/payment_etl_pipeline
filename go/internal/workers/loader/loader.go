@@ -9,7 +9,7 @@ import (
 	"github.com/ClickHouse/clickhouse-go/v2"
 	"github.com/google/uuid"
 
-	"payment_etl_pipeline/internal/db"
+	"payment_etl_pipeline/internal/db/chdb"
 	"payment_etl_pipeline/internal/helpers"
 	"payment_etl_pipeline/internal/interfaces"
 	"payment_etl_pipeline/internal/models"
@@ -24,13 +24,13 @@ type loader struct {
 	conn clickhouse.Conn
 }
 
-func NewLoader(db *db.ClickHouseDB) interfaces.Loader {
+func NewLoader(db *chdb.ClickHouseDB) interfaces.Loader {
 	return &loader{
 		conn: db.Conn,
 	}
 }
 
-func (l loader) Load(ctx context.Context, batches <-chan []models.PaymentEvent) error {
+func (l *loader) Load(ctx context.Context, batches <-chan []models.PaymentEvent) error {
 	var totalBatches, totalEvents int64
 
 	for {

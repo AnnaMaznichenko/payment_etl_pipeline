@@ -5,6 +5,7 @@ services:
       context: ..          # контекст - корень проекта
       dockerfile: deployments/Dockerfile  # путь к Dockerfile
     environment:
+      TZ: UTC
       CARDS_DSN: ${CARDS_DSN}
       WALLETS_DSN: ${WALLETS_DSN}
       CRYPTO_DSN: ${CRYPTO_DSN}
@@ -21,6 +22,10 @@ services:
       TIMEOUT: ${TIMEOUT}
       POLL_INTERVAL: ${POLL_INTERVAL}
       SHUTDOWN_TIMEOUT: ${SHUTDOWN_TIMEOUT}
+      GENERATOR_ENABLED: ${GENERATOR_ENABLED}
+      GENERATOR_CARDS_INTERVAL: ${GENERATOR_CARDS_INTERVAL}
+      GENERATOR_WALLETS_INTERVAL: ${GENERATOR_WALLETS_INTERVAL}
+      GENERATOR_CRYPTO_INTERVAL: ${GENERATOR_CRYPTO_INTERVAL}
     depends_on:
       postgres-cards:
         condition: service_healthy
@@ -39,6 +44,8 @@ services:
     image: postgres:15-alpine
     container_name: postgres-cards
     environment:
+      TZ: UTC
+      PGTZ: UTC
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_CARDS_DB}
@@ -59,6 +66,8 @@ services:
     image: postgres:15-alpine
     container_name: postgres-wallets
     environment:
+      TZ: UTC
+      PGTZ: UTC
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_WALLETS_DB}
@@ -79,6 +88,8 @@ services:
     image: postgres:15-alpine
     container_name: postgres-crypto
     environment:
+      TZ: UTC
+      PGTZ: UTC
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_CRYPTO_DB}
@@ -99,6 +110,8 @@ services:
     image: postgres:15-alpine
     container_name: postgres-meta
     environment:
+      TZ: UTC
+      PGTZ: UTC
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_META_DB}
@@ -119,6 +132,7 @@ services:
     image: clickhouse/clickhouse-server:latest
     container_name: clickhouse
     environment:
+      TZ: UTC
       CLICKHOUSE_USER: ${CLICKHOUSE_USER}
       CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD}
     ports:

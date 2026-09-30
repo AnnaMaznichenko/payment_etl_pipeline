@@ -7,8 +7,8 @@ CREATE TABLE IF NOT EXISTS payment_crypto (
     amount_btc DECIMAL(16,8) NOT NULL,
     confirmations INTEGER DEFAULT 0,
     status_code VARCHAR(10) DEFAULT 'pend',
-    block_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    block_time TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 -- +goose StatementEnd
 

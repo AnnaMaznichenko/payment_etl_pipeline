@@ -15,7 +15,7 @@ type paymentExtractor[T any] struct {
 	source   source.Source
 }
 
-func (e paymentExtractor[T]) Extract(ctx context.Context, from, to time.Time) (<-chan T, <-chan error) {
+func (e *paymentExtractor[T]) Extract(ctx context.Context, from, to time.Time) (<-chan T, <-chan error) {
 	dataCh := make(chan T)
 	errCh := make(chan error, 1)
 

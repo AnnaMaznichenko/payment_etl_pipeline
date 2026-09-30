@@ -22,7 +22,7 @@ func NewCardsNormalizer() interfaces.Normalizer[dbo.PaymentCard] {
 	}
 }
 
-func (n cardsNormalizer) Normalize(ctx context.Context, rawCh <-chan dbo.PaymentCard) <-chan models.PaymentEvent {
+func (n *cardsNormalizer) Normalize(ctx context.Context, rawCh <-chan dbo.PaymentCard) <-chan models.PaymentEvent {
 	return normalizeEvent(ctx, rawCh, func(card dbo.PaymentCard) models.PaymentEvent {
 		return models.PaymentEvent{
 			SourceSystem:      source.Cards.String(),

@@ -20,7 +20,7 @@ func NewBatcher(size int, timeout time.Duration) interfaces.Batcher {
 	}
 }
 
-func (b batcher) Batch(ctx context.Context, events <-chan models.PaymentEvent) <-chan []models.PaymentEvent {
+func (b *batcher) Batch(ctx context.Context, events <-chan models.PaymentEvent) <-chan []models.PaymentEvent {
 	batch := make([]models.PaymentEvent, 0, b.size)
 	out := make(chan []models.PaymentEvent)
 
