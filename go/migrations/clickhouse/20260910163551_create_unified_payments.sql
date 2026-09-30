@@ -7,10 +7,10 @@ CREATE TABLE IF NOT EXISTS default.unified_payments (
     amount Float64,
     currency String,
     status String,
-    event_at DateTime,
+    event_at DateTime('UTC'),
     raw_status_original String,
     batch_id UUID,
-    ingested_at DateTime DEFAULT now()
+    ingested_at DateTime('UTC') DEFAULT now()
 ) ENGINE = ReplacingMergeTree(ingested_at)
 ORDER BY (source_system, external_id);
 -- +goose StatementEnd

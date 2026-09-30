@@ -8,8 +8,8 @@ CREATE TABLE IF NOT EXISTS payment_cards (
     currency_code VARCHAR(3) DEFAULT 'RUB',
     payment_status VARCHAR(20),
     gateway_response TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 -- +goose StatementEnd
 
