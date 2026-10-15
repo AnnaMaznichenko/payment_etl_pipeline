@@ -88,6 +88,10 @@ func (o *orchestrator) Run(ctx context.Context) error {
 				continue
 			}
 
+			if err = ctx.Err(); err != nil {
+				return nil
+			}
+
 			updates := make(map[source.Source]time.Time)
 			for _, r := range results {
 				if sourceHasErrors(r.name, r.errCh) {
