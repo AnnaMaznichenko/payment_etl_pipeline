@@ -50,7 +50,7 @@ func (g *cryptoGenerator) Generate(ctx context.Context) error {
 
 	for i := 0; i < count; i++ {
 		if len(availableForUpdate) > 0 && rand.Float64() < updateChance {
-			// Обновляем статус
+			// Update the status
 			idx := rand.IntN(len(availableForUpdate))
 			txHash := availableForUpdate[idx]
 			availableForUpdate = append(availableForUpdate[:idx], availableForUpdate[idx+1:]...)
@@ -61,7 +61,7 @@ func (g *cryptoGenerator) Generate(ctx context.Context) error {
 			}
 			cryptos = append(cryptos, crypto)
 		} else {
-			// Создаём новую запись
+			// Create a new entry
 			crypto := newRandomCrypto()
 			g.mu.Lock()
 			g.txHashes = append(g.txHashes, crypto.TxHash)

@@ -11,7 +11,6 @@ const (
 	maxNewPerTick = 3
 )
 
-// randomHex генерирует строку из n случайных hex-символов с префиксом
 func randomHex(n int, prefix string) string {
 	var sb strings.Builder
 	sb.Grow(len(prefix) + n)
@@ -23,7 +22,6 @@ func randomHex(n int, prefix string) string {
 	return sb.String()
 }
 
-// round2 округляет float64 до 2 знаков после запятой
 func round2(v float64) float64 {
 	return float64(int64(v*100)) / 100
 }

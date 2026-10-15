@@ -54,7 +54,7 @@ func (g *cardsGenerator) Generate(ctx context.Context) error {
 
 	for i := 0; i < count; i++ {
 		if len(availableForUpdate) > 0 && rand.Float64() < updateChance {
-			// Обновляем статус
+			// Update the status
 			idx := rand.IntN(len(availableForUpdate))
 			txID := availableForUpdate[idx]
 			availableForUpdate = append(availableForUpdate[:idx], availableForUpdate[idx+1:]...)
@@ -65,7 +65,7 @@ func (g *cardsGenerator) Generate(ctx context.Context) error {
 			}
 			cards = append(cards, card)
 		} else {
-			// Создаём новую запись
+			// Create a new entry
 			card := newRandomCard()
 			g.mu.Lock()
 			g.ids = append(g.ids, card.TransactionID)
