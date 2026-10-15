@@ -9,7 +9,6 @@ import (
 	"github.com/ClickHouse/clickhouse-go/v2"
 	"github.com/google/uuid"
 
-	"payment_etl_pipeline/internal/db/chdb"
 	"payment_etl_pipeline/internal/helpers"
 	"payment_etl_pipeline/internal/interfaces"
 	"payment_etl_pipeline/internal/models"
@@ -18,15 +17,20 @@ import (
 const (
 	maxRetries = 3
 	retryDelay = 1 * time.Second
+
+	tableName   = "default.unified_payments"
+	insertQuery = `INSERT INTO ` + tableName + ` (` +
+		`source_system, external_id, user_identifier, amount, currency, ` +
+		`status, event_at, raw_status_original, batch_id)`
 )
 
 type loader struct {
 	conn clickhouse.Conn
 }
 
-func NewLoader(db *chdb.ClickHouseDB) interfaces.Loader {
+func NewLoader(conn clickhouse.Conn) interfaces.Loader {
 	return &loader{
-		conn: db.Conn,
+		conn: conn,
 	}
 }
 
@@ -75,7 +79,7 @@ func prepareEvents(batch []models.PaymentEvent) []models.ClickHousePaymentEvent 
 }
 
 func insertBatch(ctx context.Context, conn clickhouse.Conn, events []models.ClickHousePaymentEvent) error {
-	batch, err := conn.PrepareBatch(ctx, `INSERT INTO unified_payments (source_system, external_id, user_identifier, amount, currency, status, event_at, raw_status_original, batch_id)`)
+	batch, err := conn.PrepareBatch(ctx, insertQuery)
 	if err != nil {
 		return fmt.Errorf("prepare batch: %w", err)
 	}

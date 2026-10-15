@@ -20,7 +20,7 @@ func NewClickHouseDB(cfg config.ClickHouseConfig) (*ClickHouseDB, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), cfg.PingTimeout)
 	defer cancel()
 
-	// нативное соединение для работы приложения
+	// native connection for application operation
 	conn, err := clickhouse.Open(&clickhouse.Options{
 		Addr: []string{fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)},
 		Auth: clickhouse.Auth{
@@ -36,7 +36,7 @@ func NewClickHouseDB(cfg config.ClickHouseConfig) (*ClickHouseDB, error) {
 		return nil, fmt.Errorf("ping native connection: %w", err)
 	}
 
-	// SQL-соединение для миграций
+	// SQL connection for migrations
 	u := url.URL{
 		Scheme: "clickhouse",
 		User:   url.UserPassword(cfg.User, cfg.Password),

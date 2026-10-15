@@ -44,7 +44,7 @@ func (r *checkpointRepository) Get(ctx context.Context, sources []source.Source)
 	}
 
 	result := make(map[source.Source]time.Time, len(sources))
-	// нулевые значения для первого запроса (пустая таблица)
+	// Default to zero time for sources that have no checkpoint yet
 	for _, s := range sources {
 		result[s] = time.Time{}
 	}

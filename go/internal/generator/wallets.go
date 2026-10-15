@@ -51,7 +51,7 @@ func (g *walletsGenerator) Generate(ctx context.Context) error {
 
 	for i := 0; i < count; i++ {
 		if len(availableForUpdate) > 0 && rand.Float64() < updateChance {
-			// Обновляем статус
+			// Update the status
 			idx := rand.IntN(len(availableForUpdate))
 			id := availableForUpdate[idx]
 			availableForUpdate = append(availableForUpdate[:idx], availableForUpdate[idx+1:]...)
@@ -62,7 +62,7 @@ func (g *walletsGenerator) Generate(ctx context.Context) error {
 			}
 			wallets = append(wallets, wallet)
 		} else {
-			// Создаём новую запись
+			// Create a new entry
 			wallet := newRandomWallet()
 			g.mu.Lock()
 			g.ids = append(g.ids, wallet.OperationID)

@@ -22,10 +22,14 @@ type Query struct {
 	Pagination Pagination
 }
 
+//go:generate mockery --name=PaymentRepository --output=../mocks --outpkg=mocks --with-expecter
+
 type PaymentRepository[T any] interface {
-    Find(ctx context.Context, query Query) ([]T, error)
-    Upsert(ctx context.Context, items []T) error
+	Find(ctx context.Context, query Query) ([]T, error)
+	Upsert(ctx context.Context, items []T) error
 }
+
+//go:generate mockery --name=CheckpointRepository --output=../mocks --outpkg=mocks --with-expecter
 
 type CheckpointRepository interface {
 	Get(ctx context.Context, sources []source.Source) (map[source.Source]time.Time, error)

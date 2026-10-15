@@ -67,8 +67,8 @@ func main() {
 	cryptoNormalizator := normalizer.NewCryptoNormalizer()
 	walletNormalizator := normalizer.NewWalletsNormalizer()
 
-	batcher := batcher.NewBatcher(cfg.Pipeline.BatchSize, cfg.Pipeline.Timeout)
-	loader := loader.NewLoader(chDB)
+	b := batcher.NewBatcher(cfg.Pipeline.BatchSize, cfg.Pipeline.Timeout)
+	l := loader.NewLoader(chDB.Conn)
 	checkpointRepo := repository.NewCheckpointRepository(gormDBs.Meta)
 
 	o := orchestrator.NewOrchestrator(
@@ -82,8 +82,8 @@ func main() {
 			Crypto:  cryptoNormalizator,
 			Wallets: walletNormalizator,
 		},
-		batcher,
-		loader,
+		b,
+		l,
 		checkpointRepo,
 		cfg.Pipeline.PollInterval,
 	)
